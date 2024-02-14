@@ -36,19 +36,19 @@ def buildcards(odir, v1n, v2n, options):
 
     if int(options.blinded):
         if options.testMCTF:
-            create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
+            create_cards = "python create_datacard.py --vll_mass=%s --llp_ctau=%s --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s --blinded" % (options.vll_mass,options.llp_ctau, ifile, odir, options.n, v1n, options.passBinName)
         else:
-            create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
-        combineCards = "cd %s/VLLModel; combineCards.py pass=pass%s.txt fail=fail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
+            create_cards = "python create_datacard.py --vll_mass=%s --llp_ctau=%s --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s --blinded" % (options.vll_mass,options.llp_ctau,ifile, odir, options.n, v1n, options.passBinName)
+        combineCards = "cd %s/VLLModel_%s; combineCards.py pass=pass%s.txt fail=fitfail%s.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName, options.passBinName, options.passBinName)
     else:
         if options.testMCTF:
-            create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
+            create_cards = "python create_datacard.py --vll_mass=%s --llp_ctau=%s --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s" % (options.vll_mass,options.llp_ctau,ifile, odir, options.n, v1n, options.passBinName)
         else:
-            create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
+            create_cards = "python create_datacard.py --vll_mass=%s --llp_ctau=%s --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s" % (options.vll_mass,options.llp_ctau, ifile, odir, options.n, v1n, options.passBinName)
             print create_cards
-        combineCards = "cd %s/VLLModel; combineCards.py pass=SR%s.txt fail=fitfail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
+        combineCards = "cd %s/VLLModel_%s; combineCards.py pass=SR%s.txt fail=fitfail%s.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName, options.passBinName, options.passBinName)
     wsRoot = "%s/VLLModel_combined_n%i.root" % (odir, v1n)
-    cpCards = "cp %s/VLLModel/VLLModel_combined.root %s" % (odir, wsRoot)
+    cpCards = "cp %s/VLLModel_%s/VLLModel_combined.root %s" % (odir, options.passBinName, wsRoot)
 
     cmds = [
         create_cards,
@@ -91,8 +91,10 @@ if __name__ == "__main__":
     parser.add_option('--setParameters', action='store', type='string', dest='setParameters', default='None', help='setParameters')
     parser.add_option('--dry-run', dest="dryRun", default=False, action='store_true',  help="Just print out commands to run")
     parser.add_option('-o', '--odir', dest='odir', default='FTest', help='directory to write plots', metavar='odir')
-    parser.add_option('--passBinName', default='Bin1', choices=['Bin1', 'Bin2', 'Bin3'], dest='passBinName', help='pass bin name')
+    parser.add_option('--passBinName', default='CSCOOT', choices=['CSCOOT', 'DTOOT','CSCINT', 'DTINT','CSCB','DTB'], dest='passBinName', help='pass bin name')
     parser.add_option('--blinded', default=False, dest='blinded', help='run with data on SR')
+    parser.add_option('--vll_mass', default='300', type=str, dest='vll_mass', help='vll mass [GeV]')
+    parser.add_option('--llp_ctau', default='1000', type=str, dest='llp_ctau', help='llp ctau [mm]')
     (options, args) = parser.parse_args()
 
     logf = open(options.ifile.replace(".root", "_report.txt"), "w")

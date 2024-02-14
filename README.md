@@ -40,11 +40,11 @@ They can be found here at the LPC: /uscms/home/guerrero/nobackup/Run2/VLLAnalysi
 ## Run F-test, 1st vs 2nd order. Make sure the binning is compatible with input histograms in runFtest.py
 For CSC,
 ```bash
-python runFtest.py -n 7  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_cscmodel_ootime.root
+python runFtest.py -n 9  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_cscmodel_ootime.root
 ```
 For DT,
 ```bash
-python runFtest.py -n 7  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_dtmodel_ootime.root
+python runFtest.py -n 8  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_dtmodel_ootime.root
 ```
 
 ## Check fit performance in 1st order model:
