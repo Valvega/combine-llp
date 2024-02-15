@@ -16,6 +16,8 @@ scramv1 b clean; scramv1 b
 
 cd $CMSSW_BASE/src/
 git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
+cd CombineHarvester
+git checkout v2.0.0
 scram b
 
 pip install --user flake8
