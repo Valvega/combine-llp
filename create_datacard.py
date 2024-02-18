@@ -69,13 +69,25 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         msd = rl.Observable('nrechits', msdbins)
         msdpts = np.array([53,59,65,71,79,91,110,172,231])
         msdscaled = (msdpts-50.)/190
-
     if 'DTB' in passBinName:
         #DT Background
         msdbins = np.array([50,56,62,68,74,84,98,130,140])
         msd = rl.Observable('nrechits', msdbins)
         msdpts = np.array([53,59,65,71,79,91,114,135])
         msdscaled = (msdpts-50.)/90
+    if 'CSCU' in passBinName:
+        #CSC Background (unblinded)
+        msdbins = np.array([50,56,62,68,74,84,98,122,222,240])
+        msd = rl.Observable('nrechits', msdbins)
+        msdpts = np.array([53,59,65,71,79,91,110,172,231])
+        msdscaled = (msdpts-50.)/190
+    if 'DTU' in passBinName:
+        #DT Background (unblinded)
+        msdbins = np.array([50,56,62,68,74,84,98,130,140])
+        msd = rl.Observable('nrechits', msdbins)
+        msdpts = np.array([53,59,65,71,79,91,114,135])
+        msdscaled = (msdpts-50.)/90
+
 
     # Build qcd MC pass+fail model and fit to polynomial
     qcdmodel = rl.Model('qcdmodel')
@@ -111,7 +123,7 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     qcdparams = np.array([rl.IndependentParameter('CMS_param_msdbin%d_%s'%(i,passBinName), 0) for i in range(msd.nbins)])
 
     #Initialize systematics
-    lumi_161718          = rl.NuisanceParameter('lumi', 'lnN') #luminosity
+    lumi_161718          = rl.NuisanceParameter('lumi',    'lnN') #luminosity
     trigger              = rl.NuisanceParameter('trigger', 'lnN') #trigger
     csc_reo_eff_161718   = rl.NuisanceParameter('vll_csc_readout'    , 'lnN')  #csc reconstruction eff
     csc_rec_eff_161718   = rl.NuisanceParameter('vll_csc_rec'        , 'lnN')  #csc reconstruction eff
@@ -126,7 +138,7 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     dt_rpm_eff_161718    = rl.NuisanceParameter('vll_dt_rpcmatch'    , 'lnN')  #dt rpc matching eff 
     dt_awv_eff_161718    = rl.NuisanceParameter('vll_dt_awheelveto'  , 'lnN')  #dt adjacent wheel veto eff 
     dt_tim_eff_161718    = rl.NuisanceParameter('vll_dt_time'        , 'lnN')  #dt time eff 
-    syst_dir     = "/uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_6_8/src/TauClusterAnalysis/datacards/analysis_v7/syst/"
+    syst_dir     = "/uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/inputs_v8/syst/"
     categ        = " "
     if 'CSC' in passBinName: categ ="csc"
     if 'DT'  in passBinName: categ ="dt"
@@ -179,16 +191,14 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
             templ = (valuesNominal, templ[1], templ[2], templ[3])
             stype = rl.Sample.SIGNAL if 'vll' in sName else rl.Sample.BACKGROUND
             sample = rl.TemplateSample(ch.name + '_' + sName, stype, templ)
-            sample.setParamEffect(lumi_161718  , 1.016)
-            sample.setParamEffect(trigger , 1.010)
             if 'CSC' in passBinName:
-                    sample.setParamEffect(csc_reo_eff_161718, 1.010)
                     sample.setParamEffect(csc_rec_eff_161718, 1.130)
                     sample.setParamEffect(csc_jvt_eff_161718, 1.001)
                     sample.setParamEffect(csc_mvt_eff_161718, 1.045)
                     sample.setParamEffect(csc_cvt_eff_161718, 1.001)
                     sample.setParamEffect(csc_tsp_eff_161718, 1.028)
                     sample.setParamEffect(csc_tim_eff_161718, 1.009)
+                    sample.setParamEffect(csc_reo_eff_161718, 1.010)
             if 'DT' in passBinName:
                     sample.setParamEffect(dt_rec_eff_161718,  1.160)
                     sample.setParamEffect(dt_jvt_eff_161718,  1.001)
@@ -198,7 +208,6 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
                     sample.setParamEffect(dt_tim_eff_161718,  1.030)
             for syst in systs: sample.setParamEffect(syst[0], float(syst[1]) )
             # set mc stat uncs
-            #logging.info('setting autoMCStats for %s in %s' % (sName, region))
             #sample.autoMCStats()
             ch.addSample(sample)
 
@@ -241,7 +250,7 @@ if __name__ == '__main__':
     parser.add_argument('--nbins', default=8, type=int, dest='nbins', help='number of bins')
     parser.add_argument('--nMCTF', default=0, type=int, dest='nMCTF', help='order of polynomial for TF from MC')
     parser.add_argument('--nDataTF', default=0, type=int, dest='nDataTF', help='order of polynomial for TF from Data')
-    parser.add_argument('--passBinName', default='CSCOOT', type=str, choices=['CSCOOT', 'DTOOT','CSCINT', 'DTINT','CSCB','DTB'], help='pass bin name')
+    parser.add_argument('--passBinName', default='CSCOOT', type=str, choices=['CSCOOT', 'DTOOT','CSCINT', 'DTINT','CSCB','DTB','CSCU','DTU'], help='pass bin name')
     parser.add_argument('--blinded', action='store_true', help='run on data on SR')
     parser.add_argument('--vll_mass', default='300',  type=str, dest='vll_mass', help='vll mass [GeV]')
     parser.add_argument('--llp_ctau', default='1000', type=str, dest='llp_ctau', help='llp ctau [mm]')

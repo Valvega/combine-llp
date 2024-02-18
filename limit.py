@@ -189,7 +189,7 @@ def plotftest(iToys, iCentral, prob, iLabel, options):
     lat.SetTextSize(0.05)
     lat.SetTextFont(52)
     if options.isData:
-        lat.DrawLatex(0.23, 0.91, "Work in progress")
+        lat.DrawLatex(0.23, 0.91, "Preliminary")
     else:
         lat.DrawLatex(0.23, 0.91, "Simulation")
     lat.SetTextFont(42)
