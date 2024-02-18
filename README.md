@@ -35,9 +35,12 @@ git clone https://github.com/danielguerrero/combine-llp
 cd combine-llp/
 ```
 
-## Get input example files (histos_cscmodel_ootime.root,histos_dtmodel_ootime.root)
+## Copy input example files (histos_cscmodel_ootime.root,histos_dtmodel_ootime.root)
 They can be found here at the LPC: /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/
-
+```bash
+cp /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/histos_cscmodel_ootime.root .
+cp /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/histos_dtmodel_ootime.root .
+```
 
 ## Run F-test, 1st vs 2nd order. Make sure the binning is compatible with input histograms in runFtest.py
 For CSC,
@@ -48,6 +51,6 @@ mv FTest FTest_CSC_OOT
 For DT,
 ```bash
 python runFtest.py --passBinName=DTOOT -n 8  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_dtmodel_ootime.root
-mv FTest FTest_CSC_OOT
+mv FTest FTest_DT_OOT
 ```
 
