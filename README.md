@@ -42,7 +42,7 @@ cp /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/
 cp /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/histos_dtmodel_ootime.root .
 ```
 
-## Run F-test, 1st vs 2nd order. Make sure the binning is compatible with input histograms in runFtest.py
+## Run F-test, 1st vs 2nd order
 For CSC,
 ```bash
 python runFtest.py --passBinName=CSCOOT -n 9  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_cscmodel_ootime.root
