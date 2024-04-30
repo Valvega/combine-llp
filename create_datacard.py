@@ -141,9 +141,9 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     dt_awv_eff_161718    = rl.NuisanceParameter('vll_dt_awheelveto'  , 'lnN')  #dt adjacent wheel veto eff 
     dt_tim_eff_161718    = rl.NuisanceParameter('vll_dt_time'        , 'lnN')  #dt time eff
     syst_dir     = 'inputs'
-    if "v10" in syst:  syst_dir     = syst_dir + "_v10/"
-    if "v9" in syst:   syst_dir     = syst_dir + "_v9/"
-    if "v8" in syst:   syst_dir     = syst_dir + "_v8/"
+    if "v10" in inputfile:  syst_dir     = syst_dir + "_v10/"
+    if "v9" in inputfile:   syst_dir     = syst_dir + "_v9/"
+    if "v8" in inputfile:   syst_dir     = syst_dir + "_v8/"
 
     if 'OOT' in passBinName: syst_dir= syst_dir+"syst_oot/"
     elif 'INT' in passBinName: syst_dir= syst_dir+"syst_int/"
