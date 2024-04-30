@@ -43,9 +43,9 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     #rescaled axis to be compatible with Bernstein polymial
     if 'CSCOOT' in passBinName:
         #CSC OOT
-        msdbins = np.array([50,56,62,68,74,84,98,122,222,240])
+        msdbins = np.array([50,56,62,68,74,84,98,122,220,240]) 
         msd = rl.Observable('nrechits', msdbins)
-        msdpts = np.array([53,59,65,71,79,91,110,172,231])
+        msdpts = np.array([53,59,65,71,79,91,110,171,231]) 
         msdscaled = (msdpts-50.)/190
     if 'DTOOT' in passBinName:
         #DT OOT
@@ -64,10 +64,10 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         msdpts = np.array([53,59,65,71,79])
         msdscaled = (msdpts-50.)/34
     if 'CSCB' in passBinName:
-        #CSC Background
-        msdbins = np.array([50,56,62,68,74,84,98,122,222,240])
+        #CSC Background 
+        msdbins = np.array([50,56,62,68,74,84,98,122,220,240])
         msd = rl.Observable('nrechits', msdbins)
-        msdpts = np.array([53,59,65,71,79,91,110,172,231])
+        msdpts = np.array([53,59,65,71,79,91,110,171,231]) 
         msdscaled = (msdpts-50.)/190
     if 'DTB' in passBinName:
         #DT Background
@@ -77,17 +77,19 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         msdscaled = (msdpts-50.)/90
     if 'CSCU' in passBinName:
         #CSC Background (unblinded)
-        msdbins = np.array([50,56,62,68,74,84,98,122,222,240])
-        msd = rl.Observable('nrechits', msdbins)
-        msdpts = np.array([53,59,65,71,79,91,110,172,231])
+        msdbins = np.array([50,56,62,68,74,84,98,122,220,240]) 
+        msd = rl.Observable('cscnrechits', msdbins)
+        msdpts = np.array([53,59,65,71,79,91,110,171,231]) 
         msdscaled = (msdpts-50.)/190
     if 'DTU' in passBinName:
         #DT Background (unblinded)
-        msdbins = np.array([50,56,62,68,74,84,98,130,140])
-        msd = rl.Observable('nrechits', msdbins)
+        msdbins = np.array([50,56,62,68,74,84,98,130,140]) 
+        msd = rl.Observable('dtnrechits', msdbins)
         msdpts = np.array([53,59,65,71,79,91,114,135])
         msdscaled = (msdpts-50.)/90
-
+    categ        = " "
+    if 'CSC' in passBinName: categ ="csc"
+    if 'DT'  in passBinName: categ ="dt"
 
     # Build qcd MC pass+fail model and fit to polynomial
     qcdmodel = rl.Model('qcdmodel')
@@ -105,17 +107,17 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     qcdpass = passCh.getObservation().sum()
 
     if 'CSCB' in passBinName:
-      qcdfitfail = fitfailTempl[0][0] + fitfailTempl[0][1] + fitfailTempl[0][2] + fitfailTempl[0][3] + fitfailTempl[0][4]
+      qcdfitfail = fitfailTempl[0][0] + fitfailTempl[0][1] + fitfailTempl[0][2] + fitfailTempl[0][3] + fitfailTempl[0][4] #  + fitfailTempl[0][5]
       qcdeffpass = qcdpass / qcdfitfail
     elif 'DTB'  in passBinName:
-      qcdfitfail = fitfailTempl[0][0] + fitfailTempl[0][1] + fitfailTempl[0][2] + fitfailTempl[0][3] + fitfailTempl[0][4]
+      qcdfitfail = fitfailTempl[0][0] + fitfailTempl[0][1] + fitfailTempl[0][2] + fitfailTempl[0][3] + fitfailTempl[0][4] # + fitfailTempl[0][5]
       qcdeffpass = qcdpass / qcdfitfail
     else:
       qcdfitfail = fitfailCh.getObservation().sum()
       qcdeffpass = qcdpass / qcdfitfail
     
     # transfer factor
-    tf_dataResidual        = rl.BernsteinPoly("CMS_tf_dataResidual_"+passBinName, (nDataTF,), ['nrechits'], limits=(-20, 20))
+    tf_dataResidual        = rl.BernsteinPoly("CMS_tf_"+passBinName, (nDataTF,), ['%snrechits'%categ], limits=(-20, 20))
     tf_dataResidual_params = tf_dataResidual(msdscaled)
     tf_params_pass         = qcdeffpass * tf_dataResidual_params
 
@@ -137,11 +139,15 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     dt_mvt_eff_161718    = rl.NuisanceParameter('vll_dt_muonveto'    , 'lnN')  #dt muon veto eff 
     dt_rpm_eff_161718    = rl.NuisanceParameter('vll_dt_rpcmatch'    , 'lnN')  #dt rpc matching eff 
     dt_awv_eff_161718    = rl.NuisanceParameter('vll_dt_awheelveto'  , 'lnN')  #dt adjacent wheel veto eff 
-    dt_tim_eff_161718    = rl.NuisanceParameter('vll_dt_time'        , 'lnN')  #dt time eff 
-    syst_dir     = "/uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/inputs_v8/syst/"
-    categ        = " "
-    if 'CSC' in passBinName: categ ="csc"
-    if 'DT'  in passBinName: categ ="dt"
+    dt_tim_eff_161718    = rl.NuisanceParameter('vll_dt_time'        , 'lnN')  #dt time eff
+    syst_dir     = 'inputs'
+    if "v10" in syst:  syst_dir     = syst_dir + "_v10/"
+    if "v9" in syst:   syst_dir     = syst_dir + "_v9/"
+    if "v8" in syst:   syst_dir     = syst_dir + "_v8/"
+
+    if 'OOT' in passBinName: syst_dir= syst_dir+"syst_oot/"
+    elif 'INT' in passBinName: syst_dir= syst_dir+"syst_int/"
+    else: syst_dir= syst_dir+"syst/"
 
     # build actual fit model now
     model = rl.Model("VLLModel_%s"%passBinName)
@@ -159,7 +165,7 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
 
         # dictionary of name in datacards -> name in ROOT file
         templateNames = OrderedDict([
-            ('bkg' , 'h_%s_Data'%tagname),
+            ('datadriven', 'h_%s_Data'%tagname),
             ('data', 'h_%s_Data'%tagname),
             ('vll_%s_%s'%(vll_mass,llp_ctau) , 'h_%s_VLL%s_ctau%s'%(tagname,vll_mass,llp_ctau)  ),
         ])
@@ -180,7 +186,7 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         for temp in templateNames:
             templates[temp] = get_hist(upfile, templateNames[temp], obs=msd)
 
-        sNames = [proc for proc in templates.keys() if proc not in ['bkg', 'data']]
+        sNames = [proc for proc in templates.keys() if proc not in ['datadriven', 'data']]
 
         for sName in sNames:
             logging.info('get templates for: %s' % sName)
@@ -201,11 +207,11 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
                     sample.setParamEffect(csc_reo_eff_161718, 1.010)
             if 'DT' in passBinName:
                     sample.setParamEffect(dt_rec_eff_161718,  1.160)
-                    sample.setParamEffect(dt_jvt_eff_161718,  1.001)
+                    #sample.setParamEffect(dt_jvt_eff_161718,  1.001)
                     #sample.setParamEffect(dt_mvt_eff_161718,  1.045)
-                    sample.setParamEffect(dt_rpm_eff_161718,  1.050)
-                    sample.setParamEffect(dt_awv_eff_161718,  1.080)
-                    sample.setParamEffect(dt_tim_eff_161718,  1.030)
+                    #sample.setParamEffect(dt_rpm_eff_161718,  1.050)
+                    #sample.setParamEffect(dt_awv_eff_161718,  1.080)
+                    #sample.setParamEffect(dt_tim_eff_161718,  1.030)
             for syst in systs: sample.setParamEffect(syst[0], float(syst[1]) )
             # set mc stat uncs
             #sample.autoMCStats()
@@ -214,7 +220,7 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         # data observed
         yields = templates['data'][0] 
         data_obs = (yields, msd.binning, msd.name)
-        ch.setObservation(data_obs)
+        ch.setObservation(data_obs) #-1?
 
     for passChName, failChName in regionPairs:
         logging.info('setting transfer factor for pass region %s, fail region %s' % (passChName, failChName))
