@@ -35,7 +35,7 @@ def redrawBorder():
 def getVals(fname):
 	fIn = ROOT.TFile.Open(fname)
 	tIn = fIn.Get('limit')
-	if tIn.GetEntries() != 5:
+	if tIn.GetEntries() != 6:
 		print "*** WARNING: cannot parse file", fname, "because nentries != 6"
 		raise RuntimeError('cannot parse file')
 	vals = []
@@ -52,14 +52,17 @@ parser = argparse.ArgumentParser(description='Command line parser of skim option
 parser.add_argument('--version', dest='version',help='version', required = True)
 parser.add_argument('--mvll', dest='mvll',help='mvll value', required = True)
 parser.add_argument('--categ',    dest='categ', action='store_true', help='Do signal')
+parser.add_argument('--unblind', dest='unblind',action='store_true', help='Unblind the observed')
 parser.set_defaults(categ=False)
+parser.set_defaults(unblind=False)
 
 args = parser.parse_args()
 ###########
 ###CREATE TAGS
-mvll    = args.mvll
-categ   = args.categ
-version = args.version
+mvll   = args.mvll
+categ  = args.categ
+version= args.version
+unblind= args.unblind
 
 #Plot it
 c1 = ROOT.TCanvas("c1", "c1", 1300, 1000)
@@ -77,6 +80,8 @@ grexp = ROOT.TGraph()
 grobs = ROOT.TGraph()
 grexp_csc = ROOT.TGraph()
 grexp_dt  = ROOT.TGraph()
+grobs_csc = ROOT.TGraph()
+grobs_dt  = ROOT.TGraph()
 
 xsections      = [0.01927,  0.00044, 0.00006]
 ctaus          = [10, 20, 30, 80, 100, 200, 300, 800, 1000, 2000, 3000, 8000, 10000]
@@ -99,9 +104,11 @@ ptsList = []
 #fill out the arrays for limits
 for k in range(0, len(ctaus) ):
 	fname = "datacards_%s/cards_%s_%s/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[k],mvll,ctaus[k])
+	if unblind==True: fname = "datacards_unblinded_%s/cards_%s_%s/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[k],mvll,ctaus[k])
 	vals  = getVals(fname)
 	xs    = xsecth
 	obs   = 0.0 ## FIXME
+	if unblind==True: obs= vals[5][1]*xs
 	m2s_t = vals[0][1]*xs
 	m1s_t = vals[1][1]*xs
 	exp   = vals[2][1]*xs
@@ -136,9 +143,11 @@ if categ==True:
 	#CSC fill
 	for j in range(0, len(ctaus) ):
 		fname = "datacards_%s/cards_%s_%s/VLLModel_CSCB/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[j],mvll,ctaus[j])
+		if unblind==True: fname = "datacards_unblinded_%s/cards_%s_%s/VLLModel_CSCU/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[j],mvll,ctaus[j])
 		vals  = getVals(fname)
 		xs    = xsecth
 		obs   = 0.0 ## FIXME
+		if unblind==True: obs = vals[5][1]*xs
 		m2s_t = vals[0][1]*xs
 		m1s_t = vals[1][1]*xs
 		exp   = vals[2][1]*xs
@@ -154,14 +163,18 @@ if categ==True:
 	ptsList_csc.sort()
 	for ipt, pt in enumerate(ptsList_csc):
 		xval = pt[0]
+		obs  = pt[1]
 		exp  = pt[2]
+		grobs_csc.SetPoint(ipt, xval, obs)
 		grexp_csc.SetPoint(ipt, xval, exp)
 	#DT fill
 	for k in range(0, len(ctaus) ):
 		fname = "datacards_%s/cards_%s_%s/VLLModel_DTB/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[k],mvll,ctaus[k])
+		if unblind==True: fname = "datacards_unblinded_%s/cards_%s_%s/VLLModel_DTU/higgsCombine_%s_%s.AsymptoticLimits.mH120.root"%(version,mvll,ctaus[k],mvll,ctaus[k])
 		vals  = getVals(fname)
 		xs    = xsecth
 		obs   = 0.0 ## FIXME
+		if unblind==True: obs = vals[5][1]*xs
 		m2s_t = vals[0][1]*xs
 		m1s_t = vals[1][1]*xs
 		exp   = vals[2][1]*xs
@@ -177,8 +190,11 @@ if categ==True:
 	ptsList_dt.sort()
 	for ipt, pt in enumerate(ptsList_dt):
 		xval = pt[0]
+		obs  = pt[1]
 		exp  = pt[2]
 		grexp_dt.SetPoint(ipt, xval, exp)
+		grobs_dt.SetPoint(ipt, xval, obs)
+
 	#set styles
 	grexp_csc.SetMarkerStyle(24)
 	grexp_csc.SetMarkerColor(4)
@@ -194,6 +210,17 @@ if categ==True:
 	grexp_dt.SetLineWidth(3)
 	grexp_dt.SetLineStyle(2)
 	grexp_dt.SetFillColor(0) 
+	grobs_csc.SetLineColor(ROOT.kRed+2)
+	grobs_csc.SetLineWidth(3)
+	grobs_csc.SetMarkerColor(1)
+	grobs_csc.SetMarkerStyle(20)
+	grobs_csc.SetFillStyle(0)
+	grobs_dt.SetLineColor(ROOT.kGreen+2)
+	grobs_dt.SetLineWidth(3)
+	grobs_dt.SetMarkerColor(1)
+	grobs_dt.SetMarkerStyle(20)
+	grobs_dt.SetFillStyle(0)
+
 
 ######## set styles
 grexp.SetMarkerStyle(24)
@@ -204,6 +231,7 @@ grexp.SetLineWidth(3)
 grexp.SetLineStyle(2)
 grexp.SetFillColor(0)
 grobs.SetLineColor(1)
+if categ==True: grobs.SetLineColor(ROOT.kBlue+2)
 grobs.SetLineWidth(3)
 grobs.SetMarkerColor(1)
 grobs.SetMarkerStyle(20)
@@ -219,11 +247,6 @@ gr2sigma.SetFillColor(ROOT.kOrange)
 gr2sigma.SetLineColor(ROOT.kOrange)
 gr2sigma.SetFillStyle(1001)
 
-#mg.Add(gr2sigma, "3")
-#mg.Add(gr1sigma, "3")
-#mg.Add(grexp, "L")
-#mg.Add(grobs, "L")
-
 ###########
 legend = ROOT.TLegend(0,0,0,0)
 legend.SetFillColor(ROOT.kWhite)
@@ -231,9 +254,9 @@ legend.SetBorderSize(0)
 # legend
 if categ==True:
    legend.SetHeader('95% CL median expected upper limts')
-   legend.AddEntry(grexp_csc, "CSC Category", "l")
-   legend.AddEntry(grexp_dt, "DT Category", "l")
-   legend.AddEntry(grexp, "Combination", "l")
+   legend.AddEntry(grobs_csc, "CSC Category", "l")
+   legend.AddEntry(grobs_dt, "DT Category", "l")
+   legend.AddEntry(grobs, "Combination", "l")
    legend.SetX1(0.17284)
    legend.SetY1(0.730526)
    legend.SetX2(0.520062)
@@ -250,6 +273,7 @@ else:
    legend.SetX2(0.520062)
    legend.SetY2(0.88)
    legend.SetHeader('95% CL upper limits')
+   legend.AddEntry(grobs, "Observed"       , "l")
    legend.AddEntry(grexp, "Median expected", "l")
    legend.AddEntry(gr1sigma, "68% expected", "f")
    legend.AddEntry(gr2sigma, "95% expected", "f")
@@ -330,6 +354,10 @@ if categ==True:
   grexp.Draw("L same")
   grexp_csc.Draw("L same")
   grexp_dt.Draw("L same")
+  if unblind==True:
+	grobs.Draw("L same")
+	grobs_csc.Draw("L same")
+	grobs_dt.Draw("L same")   
   th.Draw( 'l same' )
   pt.Draw()
   pt2.Draw()
@@ -338,6 +366,7 @@ else:
   gr2sigma.Draw("3same")
   gr1sigma.Draw("3same")
   grexp.Draw("Lsame")
+  if unblind==True: grobs.Draw("L same")
   th.Draw( 'l same' )
   pt.Draw()
   pt2.Draw()
