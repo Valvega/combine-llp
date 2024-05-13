@@ -159,9 +159,11 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         if 'SR' in region:
             tagname='pass'
             infilename  = syst_dir+"file_%s_VLLPair_VLLToTauS_MVLL%s_MS10_ctau%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v9" in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
         else:
             tagname='fail'
             infilename  = syst_dir+"file_%s_0VVL_VLLPair_VLLToTauS_MVLL%s_MS10_ctau%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v9" in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
 
         # dictionary of name in datacards -> name in ROOT file
         templateNames = OrderedDict([
