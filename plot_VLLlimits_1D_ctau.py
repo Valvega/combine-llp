@@ -17,13 +17,13 @@ def seq(start, stop, step=1):
 		return([])
 
 #####
-def redrawBorder(input):
+def redrawBorder(mass):
    # this little macro redraws the axis tick marks and the pad border lines.
    ROOT.gPad.Update();
    ROOT.gPad.RedrawAxis();
    l = ROOT.TLine()
    l.SetLineWidth(3)
-   if input=='10':
+   if mass=='10':
       l.DrawLine(0.01, 0.00001, 10, 0.00001);
       l.DrawLine(0.01, 10, 10, 10);
       l.DrawLine(0.01, 0.00001, 0.01, 10);
