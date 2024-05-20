@@ -328,7 +328,14 @@ th.SetFillStyle(3001)
 th.SetLineColor(6)
 th.SetLineWidth(3)
 
-hframe = ROOT.TH1F('hframe', '', 100, 300, 1000)
+
+xrg=300
+yrg=1000
+if mllp=='2':
+    xrg=200
+    yrg=800
+
+hframe = ROOT.TH1F('hframe', '', 100, xrg, yrg)
 hframe.SetMinimum(0.0001)
 hframe.SetMaximum(10)
 hframe.GetYaxis().SetTitleSize(0.047)
