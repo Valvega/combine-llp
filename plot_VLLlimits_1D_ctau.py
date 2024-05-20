@@ -17,16 +17,23 @@ def seq(start, stop, step=1):
 		return([])
 
 #####
-def redrawBorder():
+def redrawBorder(input):
    # this little macro redraws the axis tick marks and the pad border lines.
    ROOT.gPad.Update();
    ROOT.gPad.RedrawAxis();
    l = ROOT.TLine()
    l.SetLineWidth(3)
-   l.DrawLine(0.01, 0.00001, 10, 0.00001);
-   l.DrawLine(0.01, 10, 10, 10);
-   l.DrawLine(0.01, 0.00001, 0.01, 10);
-   l.DrawLine(10, 0.00001, 10, 10);
+   if input=='10':
+      l.DrawLine(0.01, 0.00001, 10, 0.00001);
+      l.DrawLine(0.01, 10, 10, 10);
+      l.DrawLine(0.01, 0.00001, 0.01, 10);
+      l.DrawLine(10, 0.00001, 10, 10);
+   else:
+      l.DrawLine(0.001, 0.00001, 10, 0.00001);
+      l.DrawLine(0.001, 10, 10, 10);
+      l.DrawLine(0.001, 0.00001, 0.001, 10);
+      l.DrawLine(10, 0.00001, 10, 10);   	
+
 
    #l.DrawLine(ROOT.gPad.GetUxmax(), 0.00001, ROOT.gPad.GetUxmax(), ROOT.gPad.GetUymax());
    #l.DrawLine(ROOT.gPad.GetUxmin(), 0.00001, ROOT.gPad.GetUxmin(), ROOT.gPad.GetUymax());
@@ -102,6 +109,8 @@ for k in range(0, len(masses)):
 n  = 2
 x  = array('d', [0.01,10])
 y  = array('d', [xsecth,xsecth])
+
+if mllp=='2': x  = array('d', [0.001,10])
 
 ##print coupling_xs
 ptsList = [] 
