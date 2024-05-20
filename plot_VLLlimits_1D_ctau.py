@@ -51,6 +51,7 @@ def getVals(fname):
 parser = argparse.ArgumentParser(description='Command line parser of skim options')
 parser.add_argument('--version', dest='version',help='version', required = True)
 parser.add_argument('--mvll', dest='mvll',help='mvll value', required = True)
+parser.add_argument('--mllp', dest='mllp',help='mllp value', required = True)
 parser.add_argument('--categ',    dest='categ', action='store_true', help='Do signal')
 parser.add_argument('--unblind', dest='unblind',action='store_true', help='Unblind the observed')
 parser.set_defaults(categ=False)
@@ -60,6 +61,7 @@ args = parser.parse_args()
 ###########
 ###CREATE TAGS
 mvll   = args.mvll
+mllp   = args.mllp
 categ  = args.categ
 version= args.version
 unblind= args.unblind
@@ -83,15 +85,18 @@ grexp_dt  = ROOT.TGraph()
 grobs_csc = ROOT.TGraph()
 grobs_dt  = ROOT.TGraph()
 
-xsections      = [0.01927,  0.00044, 0.00006]
-ctaus          = [10, 20, 30, 80, 100, 200, 300, 800, 1000, 2000, 3000, 8000, 10000]
-xsecth = 0
-if mvll=='300':
-	xsecth = xsections[0]
-if mvll=='700':
-	xsecth = xsections[1]
-if mvll=='1000':
-	xsecth = xsections[2]
+ctaus     = []
+xsecth    = 0
+xsections = [0.08865, 0.01927, 0.005932, 0.002232, 0.0009479, 0.0004374,0.0002139,0.000122,0.00006]
+masses    = [200,         300,      400,      500,       600,       700,      800,     900,   1000]  
+
+if mllp=='2':
+	ctaus     = [1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,150,200,250,300,800,1000,2000,3000,8000,10000]
+if mllp=='10':
+    ctaus      = [10, 20, 30, 80, 100, 200, 300, 800, 1000, 2000, 3000, 8000, 10000]
+
+for k in (0, len(masses)):
+   if int(mvll)==masses[k]: xsecth=xsections[k] 
 	
 #Get XS predicted for vll vs mass
 n  = 2
@@ -311,7 +316,7 @@ pt4.SetTextSize(0.05)
 pt4.SetBorderSize(0)
 pt4.SetTextAlign(32)
 pt4.AddText("")
-pt4.AddText("m_{a} = 10 GeV")
+pt4.AddText("m_{a} = %s GeV"%mllp)
 pt4.AddText("")
 pt4.AddText("m_{VLL}= %s GeV"%(mvll) )  
 

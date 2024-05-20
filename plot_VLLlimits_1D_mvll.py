@@ -46,7 +46,8 @@ def getVals(fname):
 ###########OPTIONS
 parser = argparse.ArgumentParser(description='Command line parser of skim options')
 parser.add_argument('--version', dest='version',help='version, e.g v8', required = True)
-parser.add_argument('--ctau',    dest='ctau'   ,help='ctau', required = True)
+parser.add_argument('--mllp',    dest='mllp'   ,help='mllp value'  , required = True)
+parser.add_argument('--ctau',    dest='ctau'   ,help='ctau'        , required = True)
 parser.add_argument('--categ',   dest='categ'  ,action='store_true', help='Category result')
 parser.add_argument('--unblind', dest='unblind',action='store_true', help='Unblind the observed')
 
@@ -55,6 +56,7 @@ parser.set_defaults(categ=False)
 parser.set_defaults(unblind=False)
 ###########
 ###CREATE TAGS
+mllp   = args.mllp
 ctau   = args.ctau
 categ  = args.categ
 version= args.version
@@ -79,16 +81,20 @@ grexp_dt  = ROOT.TGraph()
 grobs_csc = ROOT.TGraph()
 grobs_dt  = ROOT.TGraph()
 
-#coupling_xs  = []
-#coupling_xs2 = []
-
-masses         = [300, 700, 1000]
-xsections      = [0.01927,  0.00044, 0.00006]
+#Assign xs and masses
+xsections = []
+masses    = []  
+if mllp=='2':
+	masses     = [200,300,400,500,600,700,800]
+    xsections  = [0.08865, 0.01927, 0.005932, 0.002232, 0.0009479, 0.0004374,0.0002139]
+if mllp=='10':
+    masses     = [300,700,1000]
+    xsections  = [0.01927,  0.00044, 0.00006]
 
 #Get XS predicted for vll vs mass
-n  = 8
-x  = array('d', [300, 400, 500, 600, 700, 800, 900, 1000])
-y  = array('d', [0.01927,0.00720*(0.01927/0.0229),0.00274*(0.01927/0.0229),0.00119*(0.01927/0.0229), 0.00044,0.000277*(0.01927/0.0229),0.000145*(0.01927/0.0229),0.00006])
+n  = 9
+x  = array('d', [200,         300,      400,      500,       600,       700,      800,     900,   1000])
+y  = array('d', [0.08865, 0.01927, 0.005932, 0.002232, 0.0009479, 0.0004374,0.0002139,0.000122,0.00006])
 
 ##print coupling_xs
 ptsList = [] 
@@ -302,7 +308,7 @@ pt4.SetTextSize(0.05)
 pt4.SetBorderSize(0)
 pt4.SetTextAlign(32)
 pt4.AddText("")
-pt4.AddText("m_{a} = 10 GeV")
+pt4.AddText("m_{a} = %s GeV"%mllp)
 pt4.AddText("")
 pt4.AddText("c#tau_{a}= %.2f m"%(float(ctau)/1000) )  
 
