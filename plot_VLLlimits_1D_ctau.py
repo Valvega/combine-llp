@@ -392,7 +392,7 @@ else:
   pt2.Draw()
   pt4.Draw()
   pt5.Draw()
-redrawBorder()
+redrawBorder(mllp)
 c1.Update()
 legend.Draw()
 c1.Update()
