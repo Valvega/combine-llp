@@ -7,7 +7,7 @@ mkdir plots_${VERSION}/vlllimits_vs_ctau
 
 if [ "$2" == "2" ]; then
      #versus ctau(a)
-     ctaus=(8 9 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 150 200 250 300 800 1000 2000 3000 8000) #mm
+     ctaus=(2 3 4 5 6 7 8 9 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 150 200 250 300 800 1000 2000 3000 8000 10000) #mm
      for ctau in ${ctaus[@]}
      do
      	   python plot_VLLlimits_1D_mvll.py --unblind --version ${VERSION} --mllp ${MASS} --ctau ${ctau} 
