@@ -95,7 +95,7 @@ if mllp=='2':
 if mllp=='10':
     ctaus      = [10, 20, 30, 80, 100, 200, 300, 800, 1000, 2000, 3000, 8000, 10000]
 
-for k in (0, len(masses)):
+for k in range(0, len(masses)):
    if masses[k]==int(mvll): xsecth=xsections[k] 
 	
 #Get XS predicted for vll vs mass
