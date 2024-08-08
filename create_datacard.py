@@ -141,6 +141,11 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
     dt_awv_eff_161718    = rl.NuisanceParameter('vll_dt_awheelveto'  , 'lnN')  #dt adjacent wheel veto eff 
     dt_tim_eff_161718    = rl.NuisanceParameter('vll_dt_time'        , 'lnN')  #dt time eff
     syst_dir     = 'inputs'
+
+    if "v14" in inputfile:  syst_dir     = syst_dir + "_v14/"
+    if "v13" in inputfile:  syst_dir     = syst_dir + "_v13/"
+    if "v12" in inputfile:  syst_dir     = syst_dir + "_v12/"
+    if "v11" in inputfile:  syst_dir     = syst_dir + "_v11/"
     if "v10" in inputfile:  syst_dir     = syst_dir + "_v10/"
     if "v9" in inputfile:   syst_dir     = syst_dir + "_v9/"
     if "v8" in inputfile:   syst_dir     = syst_dir + "_v8/"
@@ -159,11 +164,17 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
         if 'SR' in region:
             tagname='pass'
             infilename  = syst_dir+"file_%s_VLLPair_VLLToTauS_MVLL%s_MS10_ctau%s.txt"%(categ, vll_mass, llp_ctau)
-            if "v9" in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v9"  in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v10" in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v11" in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v12" in inputfile: infilename = syst_dir+"file_%s_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
         else:
             tagname='fail'
             infilename  = syst_dir+"file_%s_0VVL_VLLPair_VLLToTauS_MVLL%s_MS10_ctau%s.txt"%(categ, vll_mass, llp_ctau)
-            if "v9" in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v9"  in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v11" in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v12" in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
+            if "v10" in inputfile: infilename = syst_dir+"file_%s_0VVL_VLLVLLToATauATau_MVLL-%s_MA-2_CTAU-%s.txt"%(categ, vll_mass, llp_ctau)
 
         # dictionary of name in datacards -> name in ROOT file
         templateNames = OrderedDict([
@@ -209,11 +220,6 @@ def create_datacard(vll_mass, llp_ctau, inputfile, carddir, nbins, nMCTF, nDataT
                     sample.setParamEffect(csc_reo_eff_161718, 1.010)
             if 'DT' in passBinName:
                     sample.setParamEffect(dt_rec_eff_161718,  1.160)
-                    #sample.setParamEffect(dt_jvt_eff_161718,  1.001)
-                    #sample.setParamEffect(dt_mvt_eff_161718,  1.045)
-                    #sample.setParamEffect(dt_rpm_eff_161718,  1.050)
-                    #sample.setParamEffect(dt_awv_eff_161718,  1.080)
-                    #sample.setParamEffect(dt_tim_eff_161718,  1.030)
             for syst in systs: sample.setParamEffect(syst[0], float(syst[1]) )
             # set mc stat uncs
             #sample.autoMCStats()
