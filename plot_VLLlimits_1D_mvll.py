@@ -310,7 +310,7 @@ pt4.SetTextAlign(32)
 pt4.AddText("")
 pt4.AddText("m_{a} = %s GeV"%mllp)
 pt4.AddText("")
-pt4.AddText("c#tau_{a}= %.2f m"%(float(ctau)/1000) )  
+pt4.AddText("c#tau_{a}= %.3f m"%(float(ctau)/1000) )  
 
 pt5 = ROOT.TPaveText(0.4819196+0.036,0.7780357+0.015+0.02,0.9008929+0.036,0.8675595+0.015,"brNDC")
 pt5.SetTextAlign(12)
